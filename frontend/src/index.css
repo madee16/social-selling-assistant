@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Cobalt & Coral Palette */
+  --color-cobalt: #2563eb;
+  --color-cobalt-50: #eff6ff;
+  --color-cobalt-100: #dbeafe;
+  --color-cobalt-200: #bfdbfe;
+  --color-cobalt-300: #93c5fd;
+  --color-cobalt-400: #60a5fa;
+  --color-cobalt-500: #3b82f6;
+  --color-cobalt-600: #2563eb;
+  --color-cobalt-700: #1d4ed8;
+  --color-cobalt-800: #1e40af;
+  --color-cobalt-900: #1e3a8a;
+  --color-cobalt-950: #172554;
+
+  --color-navy: #172554;
+  --color-navy-50: #f8fafc;
+  --color-navy-100: #f1f5f9;
+  --color-navy-700: #1e3a8a;
+  --color-navy-800: #1e293b;
+  --color-navy-900: #172554;
+  --color-navy-950: #0b1120;
+
+  --color-coral: #fb7185;
+  --color-coral-50: #fff1f2;
+  --color-coral-100: #ffe4e6;
+  --color-coral-200: #fecdd3;
+  --color-coral-300: #fda4af;
+  --color-coral-400: #fb7185;
+  --color-coral-500: #f43f5e;
+  --color-coral-600: #e11d48;
+}
+
+:root {
+  /* Centralized Cobalt & Coral Design Tokens */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-subtle: #eff6ff;
+  --color-contrast-navy: #172554;
+  --color-accent-coral: #fb7185;
+  --color-accent-coral-hover: #f43f5e;
+  --color-accent-coral-subtle: #fff1f2;
+
+  --color-bg-app: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-hover: #f1f5f9;
+  --color-text-main: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-border-focus: #2563eb;
+
+  --color-status-success: #10b981;
+  --color-status-warning: #f59e0b;
+  --color-status-danger: #ef4444;
+  --color-status-info: #2563eb;
+}
+
+.dark {
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-subtle: rgba(37, 99, 235, 0.15);
+  --color-contrast-navy: #0b1120;
+  --color-accent-coral: #fb7185;
+  --color-accent-coral-hover: #f43f5e;
+  --color-accent-coral-subtle: rgba(251, 113, 133, 0.15);
+
+  --color-bg-app: #0b1120;
+  --color-bg-surface: #0f172a;
+  --color-bg-surface-hover: #1e293b;
+  --color-text-main: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-border: #1e293b;
+  --color-border-subtle: #172554;
+  --color-border-focus: #3b82f6;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body {
+  background-color: #0b1120;
+  color: #f8fafc;
+}
+
+/* Animations */
+@keyframes slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.toast-enter {
+  animation: slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-exit {
+  animation: slide-out 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  min-width: 300px;
+  max-width: 450px;
+  border: 1px solid transparent;
+}
+
+.toast-success { background: #065f46; color: #ffffff; border-color: #047857; }
+.toast-error { background: #9f1239; color: #ffffff; border-color: #be123c; }
+.toast-info { background: #1d4ed8; color: #ffffff; border-color: #2563eb; }
+.toast-warning { background: #92400e; color: #ffffff; border-color: #b45309; }
+
+.dark .toast {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.dark .toast-success { background: #064e3b; color: #a7f3d0; border-color: #059669; }
+.dark .toast-error { background: #881337; color: #fecdd3; border-color: #e11d48; }
+.dark .toast-info { background: #172554; color: #bfdbfe; border-color: #2563eb; }
+.dark .toast-warning { background: #78350f; color: #fde68a; border-color: #d97706; }
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.toast-message { flex: 1; font-size: 0.875rem; font-weight: 500; }
+
+.toast-close {
+  flex-shrink: 0;
+  padding: 0.25rem;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+.toast-close:hover { opacity: 1; }
+
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
+  background-size: 400% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.spinner {
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.loading-dots span {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: loading-bounce 1.2s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes loading-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-0.3rem); opacity: 1; }
+}

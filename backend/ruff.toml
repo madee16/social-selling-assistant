@@ -1,0 +1,39 @@
+target-version = "py313"
+line-length = 100
+exclude = [
+    ".venv",
+    "__pycache__",
+    "venv",
+    "alembic/versions",
+]
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "BLE", # flake8-blind-except
+    "DTZ", # flake8-datetimez
+    "G",   # flake8-logging-format
+    "RUF", # ruff-specific
+]
+ignore = [
+    "E501", # line length handled by ruff format
+]
+
+[lint.flake8-bugbear]
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.Header",
+    "fastapi.File",
+    "fastapi.Form",
+    "fastapi.Path",
+    "fastapi.security.HTTPBearer",
+    "fastapi.security.HTTPBasic",
+    "fastapi.security.OAuth2PasswordBearer",
+    "fastapi.security.OAuth2PasswordRequestForm",
+]

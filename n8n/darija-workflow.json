@@ -1,0 +1,147 @@
+{
+  "name": "Darija AI Reply (Social Selling Assistant)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "darija-reply",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "darija-webhook-0001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "darijaStandalone0001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a single, language-consistent prompt.\n// The customer message and history arrive from the FastAPI backend.\n\nconst input = $json.body ?? $json;\nconst userMessage = input.user_message || '';\nconst history = input.conversation_history || '';\nconst products = input.product_context || '';\nconst preferred = input.preferred_language || 'fr';\nconst systemPrompt = input.system_prompt || '';\n\n// Detect whether the customer wrote in Arabic script (Darija / MSA).\nconst arabicRatio = (userMessage.match(/[\\u0600-\\u06FF]/g) || []).length / Math.max(userMessage.length, 1);\nconst isArabic = arabicRatio > 0.3;\n\nlet languageInstruction;\nif (isArabic) {\n  languageInstruction =\n    'IMPORTANT — LANGUAGE: The customer wrote in ARABIC SCRIPT (Tunisian Darija). ' +\n    'Reply in Tunisian Darija (العربية التونسية), using natural everyday language ' +\n    'like a Tunisian shop assistant would speak, e.g. \"شكون\" \"باش\" \"أصلي\" \"السبر\" \"ماشي\" \"برشا\". ' +\n    'Keep the product names as they are. Do NOT reply in formal French.';\n} else if (preferred === 'ar') {\n  languageInstruction = 'Reply in Tunisian Darija (العربية التونسية), naturally and warmly.';\n} else if (preferred === 'en') {\n  languageInstruction = 'Reply in English.';\n} else {\n  languageInstruction = 'Reply in French.';\n}\n\nconst prompt = systemPrompt + '\\n\\n' + languageInstruction + '\\n\\n' +\n  'CONTEXTE PRODUITS :\\n' + products + '\\n\\n' +\n  'HISTORIQUE DE LA CONVERSATION :\\n' + (history || 'Aucun historique.') + '\\n\\n' +\n  'client: ' + userMessage + '\\nvendeur:';\n\n// Keep the ORDER block instruction from the system prompt intact so orders\n// can still be auto-created by the backend after parsing the reply.\nreturn [{\n  json: {\n    prompt: prompt,\n    language: isArabic ? 'darija' : (preferred === 'ar' ? 'darija' : preferred),\n    reply_language: preferred\n  }\n}];"
+      },
+      "id": "darija-build-0002",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://integrate.api.nvidia.com/v1/chat/completions",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.NVIDIA_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"nvidia/nemotron-3-ultra-550b-a55b\",\n  \"temperature\": 0.7,\n  \"max_tokens\": 1024,\n  \"messages\": [{\"role\": \"user\", \"content\": {{ JSON.stringify($json.prompt) }}}]\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "darija-gen-0003",
+      "name": "Generate Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Discard NVIDIA plumbing and return only { reply, language }.\nconst data = $json.body ?? $json;\nconst reply = data?.choices?.[0]?.message?.content || '';\nconst language = $('Build Prompt').first().json.language || 'fr';\n\nreturn [{\n  json: {\n    reply: reply,\n    language: language\n  }\n}];"
+      },
+      "id": "darija-parse-0004",
+      "name": "Parse Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { reply: $json.reply, language: $json.language } }}",
+        "options": {}
+      },
+      "id": "darija-respond-0005",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Reply": {
+      "main": [
+        [
+          {
+            "node": "Parse Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Reply": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

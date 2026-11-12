@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Environment (real secrets — NEVER commit)
+.env
+.env.*
+.env.local
+.env.*.local
+*.local
+
+# Frontend caches
+.vite/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Private documentation (kept local)
+/ARCHITECTURE-MIGRATION-PROPOSAL.md
+/ARCHITECTURE-PLAN.md
+/DOCUMENTAIRE_EXECUTIF_DIRECTION.md
+/IMPLEMENTATION_PROGRESS.md
+/ROADMAP.md
+/markdowns/
+
+# Generated Archify diagrams (kept local)
+/.archify/
