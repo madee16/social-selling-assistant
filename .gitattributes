@@ -1,0 +1,3 @@
+# Mark agent skills and pre-rendered examples as vendored so GitHub Linguist
+# calculates language statistics from the actual application code (Python & TypeScript).
+.agents/** linguist-vendored
